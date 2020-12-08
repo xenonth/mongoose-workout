@@ -1,7 +1,7 @@
 {
-  "name": "mongoose_skeleton",
+  "name": "mongoose-workout",
   "version": "1.0.0",
-  "description": "",
+  "description": "A workout planning web application using mongoose DB via heroku",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,11 +9,23 @@
     "watch": "nodemon server.js",
     "seed": "node seeders/seed.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "xenonth",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.16.3",
+    "express": "^4.17.1",
+    "mongojs": "^3.1.0",
     "mongoose": "^5.3.16",
-    "morgan": "^1.9.1"
-  }
+    "morgan": "^1.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xenonth/mongoose-workout.git"
+  },
+  "keywords": [
+    "workout"
+  ],
+  "bugs": {
+    "url": "https://github.com/xenonth/mongoose-workout/issues"
+  },
+  "homepage": "https://github.com/xenonth/mongoose-workout#readme"
 }
