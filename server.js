@@ -6,9 +6,13 @@ const path = require("path")
 
 
 //Module imports
+const app = express()
+
+
+app.use(express.static(path.join(__dirname + '/public')));
+
 const router = require("./controllers/exercisehtmlRoutes.js")
 
-const app = express()
 
 
 const PORT = process.env.PORT || 3001;
@@ -18,8 +22,6 @@ app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
-
-app.use(express.static('public'));
 
 app.use(router);
 
