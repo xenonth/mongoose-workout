@@ -12,15 +12,20 @@ let router = express.Router()
 //==================== GET API'S =================================
 //Main index page
 router.get("/", (req, res) => {
-    res.sendFile(path.join("/index.html"));
+    res.render("../public/index.html");
 });
 
-router.get("/exercise", (req, res) => {
-    res.sendFile(path.join("/exercise.html"));
+router.get("/exercise.html", (req, res) => {
+    res.render("../public/exercise.html");
 });
 
-router.get("/stats", (req, res) => {
-    res.sendFile(path.join("/stats.html"));
+router.get("/stats.html", (req, res) => {
+    res.render("../public/stats.html");
 });
+
+
+//POST API's
+
+
 
 module.exports = router;

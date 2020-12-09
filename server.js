@@ -4,15 +4,12 @@ const mongojs = require("mongojs");
 const logger = require("morgan");
 const path = require("path")
 
-
 //Module imports
 const app = express()
 
-
-app.use(express.static(path.join(__dirname + '/public')));
-
 const router = require("./controllers/exercisehtmlRoutes.js")
 
+app.use(express.static(path.join(__dirname + '/public')));
 
 
 const PORT = process.env.PORT || 3001;
