@@ -13,7 +13,7 @@ Once done use the api's to change and update the workout's as well as being able
 //Module imports
 const app = express()
 
-const router = require("./controllers/exercisehtmlRoutes.js")
+const router = require("./routes/exercisehtmlRoutes.js")
 
 app.use(express.static(path.join(__dirname + '/public')));
 
