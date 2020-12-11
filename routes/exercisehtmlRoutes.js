@@ -37,32 +37,53 @@ router.get("/exercise", (req, res) => {
 });
 
 
-// ====================== API's for exercise.html
+// ====================== API's for stats.html ==========
 router.get("/stats", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/stats.html"));
 });
 
-router.get("/api/stats/:", (req, res) => {
-    Workout.find()
+router.get('/api/workouts/range', (req, res) => {
+    //target API data range,
+    
+        //using aggregate to send data
+        Workout.aggregate([
+            {
+                $addFields: {
+                    //adding total pounds field
+                    //adding total workout time of activities
+                    totalDuration: {
+                        $sum: "$exercises.duration",
+                    },
+                    //Need to add workouts to each other somehow?
+                },    
+                    //totalWorkouts: {}
+            },    
+        
+        ]).sort({_id: -1})
+        .limit(5)
+         .then((data) => {
+             console.log(data)
+             res.json(data);
+         })
+     .catch ((error) =>{
+        res.sendStatus(404).send();
+    })
+})
+
+//Does it need to work in tandem?
+router.post("/api/workouts/range", (req, res) => {
+    Workout.updateMany({})
+        .then((updatedData) => {
+            res.json(updatedData)
+        }) .catch(() =>{ 
+            res.sendStatus(404);
+        })
 })
 
 
-//POST API's
-//for post request for stats.js looking for information about a workout routine and workout burns
-router.put("/api/workouts/:id", ({ body, params }, res) => {
-    Workout.findByIdAndUpdate(
-      params.id,
-      { $push: { exercises: body } },
-      // "runValidators" will ensure new exercises meet our schema requirements
-      { new: true, runValidators: true }
-    )
-      .then(dbWorkout => {
-        res.json(dbWorkout);
-      })
-      .catch(err => {
-        res.json(err);
-      });
-  });
+
+
+
 
 router.post("/api/workouts", (req, res) => {
     Workout.create({})
@@ -85,39 +106,39 @@ router.get('/api/workouts', (req, res) => {
             res.json(err);    
         });
     } catch (error) {
-        res.send(status(404));
+        res.sendStatus(404).send();
     }
     });
 
-router.post("/api/workouts/range", (req, res) => {
-   
-    res.json(data)
-})
 
-// retrieves data from the database 
-router.get('/api/workouts/range', (req, res) => {
-    //target API data range,
-    try {
-        //Returning five most recent workouts
-        Workout.find({}).limit(5)
-         .then((firstFive) => {
-             res.json(firstFive);
-         })
-    } catch (error) {
-        res.send(status(404));
-    }
-
-    //send response as JSON
-
-    //get it to work and run it past trent or Dyon tomorrow
-})
+//POST API's
+//for post request for stats.js looking for information about a workout routine and workout burns
+router.put("/api/workouts/:id", ({ body, params }, res) => {
+    Workout.findByIdAndUpdate(
+      params.id,
+      { $push: { exercises: body } },
+      // "runValidators" will ensure new exercises meet our schema requirements
+      { new: true, runValidators: true }
+    )
+      .then(dbWorkout => {
+        res.json(dbWorkout);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+  });
 
 // delete route
-router.delete('/api/workouts', (req, res) => {
+router.delete('/api/workouts/', ({ body }, res) => {
     //takes the body route and deletes targeted exercise based on type
-    let stretchType = req.body 
-    Workout.findOneAndDelete({type: `exercise.${stretchType}`})
-    .then(res.send("Successfully Deleted!"));
+    
+    Workout.findByIdAndDelete(body.id)
+    .then(res.send("Successfully Deleted!"))
+    .catch((error)  => {
+        console.log(error)
+        res.sendStatus(404).send();
+    });
+    
 })
 
 module.exports = router;
