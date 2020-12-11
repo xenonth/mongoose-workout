@@ -49,15 +49,20 @@ router.get("/api/stats/:", (req, res) => {
 
 //POST API's
 //for post request for stats.js looking for information about a workout routine and workout burns
-router.put("/api/workouts/:id"), (req, res) => {
-    
-    Workout.findByIdAndUpdate(params.id, 
-        {$push: {exercises: body}}, 
-        {new: true, runValidators: true})
-        .then((dbWorkout) => {
-            res.json(dbWorkout);
-        })
-}
+router.put("/api/workouts/:id", ({ body, params }, res) => {
+    Workout.findByIdAndUpdate(
+      params.id,
+      { $push: { exercises: body } },
+      // "runValidators" will ensure new exercises meet our schema requirements
+      { new: true, runValidators: true }
+    )
+      .then(dbWorkout => {
+        res.json(dbWorkout);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+  });
 
 router.post("/api/workouts", (req, res) => {
     Workout.create({})
@@ -68,6 +73,7 @@ router.post("/api/workouts", (req, res) => {
 
 
 router.get('/api/workouts', (req, res) => {    
+    try {
     Workout.aggregate([    
         {    $addFields: {    
             totalDuration: {    $sum: '$exercises.duration',    },    
@@ -77,7 +83,10 @@ router.get('/api/workouts', (req, res) => {
         })    
         .catch((err) => {    
             res.json(err);    
-        });   
+        });
+    } catch (error) {
+        res.send(status(404));
+    }
     });
 
 router.post("/api/workouts/range", (req, res) => {
@@ -85,6 +94,30 @@ router.post("/api/workouts/range", (req, res) => {
     res.json(data)
 })
 
-//delete
+// retrieves data from the database 
+router.get('/api/workouts/range', (req, res) => {
+    //target API data range,
+    try {
+        //Returning five most recent workouts
+        Workout.find({}).limit(5)
+         .then((firstFive) => {
+             res.json(firstFive);
+         })
+    } catch (error) {
+        res.send(status(404));
+    }
+
+    //send response as JSON
+
+    //get it to work and run it past trent or Dyon tomorrow
+})
+
+// delete route
+router.delete('/api/workouts', (req, res) => {
+    //takes the body route and deletes targeted exercise based on type
+    let stretchType = req.body 
+    Workout.findOneAndDelete({type: `exercise.${stretchType}`})
+    .then(res.send("Successfully Deleted!"));
+})
 
 module.exports = router;
